@@ -1,5 +1,5 @@
 require('dotenv/config');
-const {Client, IntentsBitField, ActivityType} = require('discord.js');
+const {Client, IntentsBitField, ActivityType, AttachmentBuilder} = require('discord.js');
 const {Configuration, OpenAIApi} = require('openai');
 
 const client = new Client({
@@ -53,7 +53,7 @@ client.on('ready', () => {
 
     setInterval(() => {
         let random = Math.round(Math.random() * (status.length - 1));
-        client.user.setPresence({ activities: [{ name: 'Faites \'!!\' pour parler avec moi'}], status: 'online' });
+        client.user.setPresence({activities: [{name: 'Faites \'!!\' pour parler avec moi'}], status: 'online'});
     }, 5000);
 });
 
@@ -94,8 +94,28 @@ client.on('messageCreate', async (message) => {
                 .catch((error) => {
                     console.log(`OPENAI ERR: ${error}`);
                 });
+            const file = new AttachmentBuilder('assets/img/download.png');
+            const embedQuestion = {
+                color: 0x78A89C,
+                title: 'Votre demande',
+                description: message.content.slice(2),
+                author: {
+                    name: message.author.tag,
+                    icon_url: message.author.displayAvatarURL(),
+                },
+            };
+            const embedAnswer = {
+                color: 0x78A89C,
+                title: 'Réponse de Discord GPT',
+                description: result.data.choices[0].message.content,
+                author: {
+                    name: 'ESGI Discord GPT',
+                    icon_url: 'attachment://download.png',
+                },
+                timestamp: new Date().toISOString(),
+            };
 
-            message.reply(result.data.choices[0].message);
+            await message.reply({embeds: [embedQuestion, embedAnswer], files: [file]});
         }
 
     } catch (error) {

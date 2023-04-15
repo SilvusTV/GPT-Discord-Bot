@@ -11,6 +11,8 @@
   "author": "Silvus_tv",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^5.2.0",
+    "dayjs": "^1.11.7",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
     "openai": "^3.2.1"
